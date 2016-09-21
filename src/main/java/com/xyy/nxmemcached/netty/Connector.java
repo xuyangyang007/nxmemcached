@@ -14,7 +14,8 @@ import io.netty.util.concurrent.DefaultThreadFactory;
 
 import java.util.concurrent.TimeUnit;
 
-import com.xyy.nxmemcached.ClientConnectionHandler;
+import com.xyy.nxmemcached.netty.handler.ClientConnectionHandler;
+
 
 public class Connector {
 
@@ -37,8 +38,7 @@ public class Connector {
                     public void initChannel(SocketChannel ch) throws Exception {
                         ChannelPipeline pipeline = ch.pipeline();
                         pipeline.addLast(new IdleStateHandler(idleTime, 0, 0, TimeUnit.MILLISECONDS));
-                        // TODO
-                        pipeline.addLast(null, handler);
+                        pipeline.addLast(handler);
                     }
                 });
     }
