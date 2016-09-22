@@ -2,6 +2,8 @@ package com.xyy.nxmemcached.netty;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.ChannelPipeline;
@@ -14,6 +16,7 @@ import io.netty.util.concurrent.DefaultThreadFactory;
 
 import java.util.concurrent.TimeUnit;
 
+import com.xyy.nxmemcached.exception.CacheException;
 import com.xyy.nxmemcached.netty.handler.ClientConnectionHandler;
 
 
@@ -41,6 +44,22 @@ public class Connector {
                         pipeline.addLast(handler);
                     }
                 });
+    }
+
+    public Channel connect(String host, int port) throws CacheException {
+        ChannelFuture connectFuture = bootstrap.connect(host, port);
+        Channel channel = null;
+        try {
+            channel = connectFuture.sync().channel();
+        } catch (InterruptedException e) {
+            connectFuture.cancel(true);
+            channel = connectFuture.channel();
+            if (channel != null) {
+                channel.close();
+            }
+            throw new CacheException("connect server fail " + host + ':' + port);
+        }
+        return channel;
     }
 
 }

@@ -6,6 +6,8 @@ import io.netty.util.internal.ThreadLocalRandom;
 import java.net.InetSocketAddress;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.xyy.nxmemcached.exception.CacheException;
+
 public class ConnectionPool {
     
     private Connector connector;
@@ -25,8 +27,20 @@ public class ConnectionPool {
         this.connections = connections;
     }
     
-    public void getChannel() {
+    public Channel getChannel() throws CacheException {
         final int index = ThreadLocalRandom.current().nextInt(0, connections);
+        Channel channel = channelList[index];
+        if (channel != null && channel.isActive()) {
+            return channel;
+        }
+        String host = mcServerAddr.getAddress().getHostAddress();
+        int port = mcServerAddr.getPort();
+
+        channel = connector.connect(host, port);
+
+        channelList[index] = channel;
+
+        return channel;
     }
 
 
