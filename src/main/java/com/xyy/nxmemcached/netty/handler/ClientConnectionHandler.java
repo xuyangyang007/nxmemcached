@@ -13,6 +13,7 @@ public class ClientConnectionHandler extends ChannelDuplexHandler {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+        System.out.println("[[===");
         ByteBuf msgBuf = (ByteBuf) msg;
         if (msgBuf != null && msgBuf.refCnt() > 0) {
             msgBuf.release();
