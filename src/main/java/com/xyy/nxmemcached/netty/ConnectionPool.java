@@ -4,15 +4,12 @@ import io.netty.channel.Channel;
 import io.netty.util.internal.ThreadLocalRandom;
 
 import java.net.InetSocketAddress;
-import java.util.concurrent.ConcurrentHashMap;
 
 import com.xyy.nxmemcached.exception.CacheException;
 
 public class ConnectionPool {
     
     private Connector connector;
-    
-    private ConcurrentHashMap<String, ConnectionPool> connectionPool = new ConcurrentHashMap<String, ConnectionPool>();
     
     private Channel[] channelList;
     

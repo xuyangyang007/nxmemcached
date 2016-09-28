@@ -18,6 +18,7 @@ public class TextGetOneCommand  extends Command {
         buf.writeBytes(cmdBytes);
         buf.writeBytes(Constants.SPACE);
         buf.writeBytes(keyBytes);
+        buf.writeBytes(Constants.CRLF);
         buf.retain();
     }
 

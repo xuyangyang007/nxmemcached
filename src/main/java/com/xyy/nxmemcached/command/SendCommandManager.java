@@ -21,8 +21,8 @@ public class SendCommandManager {
         command.setKeyBytes("m_1".getBytes());
         command.setCommandType(CommandType.GET_ONE);
         command.encode();
-        channel.writeAndFlush(command.getBuf(), channel.voidPromise());
-        Thread.sleep(30000);
+        channel.writeAndFlush(command.getBuf());
+        Thread.sleep(30000000);
     }
 
 }
