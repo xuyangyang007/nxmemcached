@@ -22,6 +22,12 @@ public class SendCommandManager {
         command.setCommandType(CommandType.GET_ONE);
         command.encode();
         channel.writeAndFlush(command.getBuf());
+        TextGetOneCommand command2 = new TextGetOneCommand();
+        command2.setKey("m_1");
+        command2.setKeyBytes("m_1".getBytes());
+        command2.setCommandType(CommandType.GET_ONE);
+        command2.encode();
+        channel.writeAndFlush(command2.getBuf());
         Thread.sleep(30000000);
     }
 

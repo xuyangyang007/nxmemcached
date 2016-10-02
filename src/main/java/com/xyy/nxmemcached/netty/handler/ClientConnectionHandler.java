@@ -29,9 +29,7 @@ public class ClientConnectionHandler extends ChannelDuplexHandler {
         msgBuf.readBytes(req);
         String body = new String(req,"UTF-8");
         System.out.println("Client received: " + body);
-        if (msgBuf != null && msgBuf.refCnt() > 0) {
             msgBuf.release();
-        }
     }
 
     @Override
