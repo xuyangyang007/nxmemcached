@@ -12,6 +12,7 @@ public abstract class Command {
     protected CountDownLatch latch;
     protected CommandType commandType;
     protected volatile ByteBuf buf;
+    protected boolean noreply;
     
     public abstract void encode();
 
@@ -54,4 +55,11 @@ public abstract class Command {
         this.buf = buf;
     }
 
+    public boolean isNoreply() {
+        return noreply;
+    }
+
+    public void setNoreply(boolean noreply) {
+        this.noreply = noreply;
+    }
 }
