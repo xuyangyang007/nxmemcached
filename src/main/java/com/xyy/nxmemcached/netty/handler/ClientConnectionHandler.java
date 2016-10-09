@@ -23,13 +23,14 @@ public class ClientConnectionHandler extends ChannelDuplexHandler {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        System.out.println("[[===");
-        ByteBuf msgBuf = (ByteBuf) msg;
-        byte[] req = new byte[msgBuf.readableBytes()];
-        msgBuf.readBytes(req);
-        String body = new String(req,"UTF-8");
-        System.out.println("Client received: " + body);
-            msgBuf.release();
+        super.channelRead(ctx, msg);
+//        System.out.println("[[===");
+//        ByteBuf msgBuf = (ByteBuf) msg;
+//        byte[] req = new byte[msgBuf.readableBytes()];
+//        msgBuf.readBytes(req);
+//        String body = new String(req,"UTF-8");
+//        System.out.println("Client received: " + body);
+//            msgBuf.release();
     }
 
     @Override
