@@ -1,9 +1,10 @@
 package com.xyy.nxmemcached.command;
 
-import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -41,7 +42,61 @@ public class CommandResponseFuture {
         latch.await();
         return response;
     }
+    
+    public CommandResponse get(long timeout, TimeUnit unit) throws TimeoutException, InterruptedException {
+        if (!latch.await(timeout, unit)) {
+            throw new TimeoutException();
+        }
+        return response;
+    }
 
+    public boolean done() {
+        if (isProcessed.getAndSet(true)) {
+            return false;
+        }
+        isDone = true;
+        latch.countDown();
+        return true;
+    }
 
+    public boolean isDone() {
+        return isDone;
+    }
+
+    public void setDone(boolean isDone) {
+        this.isDone = isDone;
+    }
+
+    public boolean isCancel() {
+        return isCancel;
+    }
+
+    public void setCancel(boolean isCancel) {
+        this.isCancel = isCancel;
+    }
+
+    public Channel getChannel() {
+        return channel;
+    }
+
+    public void setChannel(Channel channel) {
+        this.channel = channel;
+    }
+
+    public CommandResponse getResponse() {
+        return response;
+    }
+
+    public void setResponse(CommandResponse response) {
+        this.response = response;
+    }
+
+    public CountDownLatch getLatch() {
+        return latch;
+    }
+
+    public AtomicBoolean getIsProcessed() {
+        return isProcessed;
+    }
 
 }
