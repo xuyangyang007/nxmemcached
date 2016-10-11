@@ -34,4 +34,11 @@ public class CommandResponse {
         this.cause = cause;
     }
     
+    public static CommandResponse newSuccess(ByteBuf buf) {
+        CommandResponse response = new CommandResponse();
+        response.setSuccess(true);
+        response.setContent(buf);
+        return response;
+    }
+    
 }

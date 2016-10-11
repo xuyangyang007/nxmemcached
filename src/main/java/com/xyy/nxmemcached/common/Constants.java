@@ -1,5 +1,7 @@
 package com.xyy.nxmemcached.common;
 
+import io.netty.util.AttributeKey;
+
 public class Constants {
     public static final byte[] CRLF = { '\r', '\n' };
     public static final byte[] GET = { 'g', 'e', 't' };
@@ -11,4 +13,7 @@ public class Constants {
     public static final byte[] TOUCH = { 't', 'o', 'u', 'c', 'h' };
     public static final byte[] NO_REPLY = { 'n', 'o', 'r', 'e', 'p', 'l', 'y' };
 
+    public static final AttributeKey<Object> DEFAULT_ATTRIBUTE = AttributeKey.valueOf("response");
+
+    public static ThreadLocal<String> t = new ThreadLocal<String>();
 }
