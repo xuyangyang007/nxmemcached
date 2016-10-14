@@ -4,6 +4,7 @@ import io.netty.channel.Channel;
 
 import java.net.InetSocketAddress;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.Semaphore;
 
 import com.xyy.nxmemcached.exception.CacheException;
 
@@ -15,16 +16,17 @@ public class ConnectionPool {
     
     InetSocketAddress mcServerAddr;
     
-    private Integer connections = 2;
+    Semaphore semp = null;
     
     public ConnectionPool(Connector connector, InetSocketAddress mcServerAddr, Integer connections) {
         channelList = new LinkedBlockingQueue<Channel>();
         this.mcServerAddr = mcServerAddr;
         this.connector = connector;
-        this.connections = connections;
+        this.semp = new Semaphore(connections);
     }
     
-    public Channel getChannel() throws CacheException {
+    public Channel getChannel() throws CacheException, InterruptedException {
+        semp.acquire();
         Channel channel = channelList.poll();
         if (channel != null && channel.isActive()) {
             return channel;
@@ -37,6 +39,13 @@ public class ConnectionPool {
         channelList.offer(channel);
 
         return channel;
+    }
+    
+    public void returnChannel(Channel channel) {
+        if (channel != null && !channel.isActive()) {
+            return ;
+        }
+        channelList.offer(channel);
     }
 
 

@@ -15,11 +15,16 @@ public class SendCommandManager {
     
     
     public static void main(String[] args) throws CacheException, InterruptedException, ExecutionException {
-        Constants.t.set("nima");
         Connector connector = new Connector(2, 30000, 30000);
         InetSocketAddress address = new InetSocketAddress("ip", 11211);
         ConnectionPool pool = new ConnectionPool(connector, address, 2);
         Channel channel = pool.getChannel();
+        sendCommand(channel);
+        sendCommand(channel);
+        Thread.sleep(30000000);
+    }
+
+    private static void sendCommand(Channel channel) throws InterruptedException {
         TextGetOneCommand command = new TextGetOneCommand();
         command.setKey("m_1");
         command.setKeyBytes("m_1".getBytes());
@@ -30,7 +35,6 @@ public class SendCommandManager {
         channel.writeAndFlush(command.getBuf());
         CommandResponse response1 = responseFuture.get();
         System.out.println(response1.getContent().toString(CharsetUtil.UTF_8));
-        Thread.sleep(30000000);
     }
 
 }
