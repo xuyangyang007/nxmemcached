@@ -16,4 +16,5 @@ public class Constants {
     public static final AttributeKey<Object> DEFAULT_ATTRIBUTE = AttributeKey.valueOf("response");
 
     public static ThreadLocal<String> t = new ThreadLocal<String>();
+    public static final String DEFAULT_CHARSET_NAME = "utf-8";
 }
