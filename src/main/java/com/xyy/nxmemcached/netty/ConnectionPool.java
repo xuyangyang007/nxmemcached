@@ -8,6 +8,10 @@ import java.util.concurrent.Semaphore;
 
 import com.xyy.nxmemcached.exception.CacheException;
 
+/**
+ * @author yangyang.xu
+ *
+ */
 public class ConnectionPool {
     
     private Connector connector;
