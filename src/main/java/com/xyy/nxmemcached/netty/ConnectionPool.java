@@ -50,6 +50,7 @@ public class ConnectionPool {
             return ;
         }
         channelList.offer(channel);
+        semp.release();
     }
 
 
