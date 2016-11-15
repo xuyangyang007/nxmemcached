@@ -53,5 +53,12 @@ public class ConnectionPool {
         semp.release();
     }
 
+	public InetSocketAddress getMcServerAddr() {
+		return mcServerAddr;
+	}
+
+	public void setMcServerAddr(InetSocketAddress mcServerAddr) {
+		this.mcServerAddr = mcServerAddr;
+	}
 
 }
