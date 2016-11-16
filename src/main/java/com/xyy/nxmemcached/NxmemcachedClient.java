@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.xyy.nxmemcached.algorithm.HashAlgorithm;
 import com.xyy.nxmemcached.algorithm.MemcachedSessionLocator;
+import com.xyy.nxmemcached.command.SendCommandManager;
 import com.xyy.nxmemcached.exception.CacheException;
 import com.xyy.nxmemcached.netty.ConnectionPool;
 import com.xyy.nxmemcached.netty.Connector;
@@ -18,7 +19,7 @@ public class NxmemcachedClient {
 	
 	private static final int MAX_CONNECTIONS = 2;
 	
-	MemcachedSessionLocator locator = null;
+	private SendCommandManager sendCommandManager = null;
 	
 	public NxmemcachedClient(String servers,  int threadPoolSize, int connectTimeOut, int idleTime) throws CacheException {
 		if (servers == null) {
@@ -35,7 +36,8 @@ public class NxmemcachedClient {
 			ConnectionPool connectionPool = new ConnectionPool(connector, mcServer, MAX_CONNECTIONS);
 			sessionList.add(connectionPool);
 		}
-		locator = new MemcachedSessionLocator(sessionList, HashAlgorithm.KETAMA_HASH);
+		MemcachedSessionLocator locator = new MemcachedSessionLocator(sessionList, HashAlgorithm.KETAMA_HASH);
+		sendCommandManager = new SendCommandManager(locator);
 	}
 
 }
