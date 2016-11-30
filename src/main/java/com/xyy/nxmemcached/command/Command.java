@@ -13,8 +13,20 @@ public abstract class Command {
     protected CommandType commandType;
     protected volatile ByteBuf buf;
     protected boolean noreply;
+    public Command() {}
     
-    public abstract void encode();
+    
+    public Command(String key, byte[] keyBytes, Object result, CountDownLatch latch, CommandType commandType, boolean noreply) {
+		super();
+		this.key = key;
+		this.keyBytes = keyBytes;
+		this.result = result;
+		this.latch = latch;
+		this.commandType = commandType;
+		this.noreply = noreply;
+	}
+
+	public abstract void encode();
 
     public abstract boolean decode(ByteBuf buf);
     
