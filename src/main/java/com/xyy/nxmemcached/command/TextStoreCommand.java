@@ -4,9 +4,8 @@ package com.xyy.nxmemcached.command;
 import java.nio.charset.Charset;
 import java.util.concurrent.CountDownLatch;
 
-import com.cplatform.surf.command.StoreCommand.Store;
-import com.cplatform.surf.seriable.Transcoder;
 import com.xyy.nxmemcached.common.Constants;
+import com.xyy.nxmemcached.seriable.Transcoder;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -69,7 +68,6 @@ public class TextStoreCommand extends Command {
 		int readerIndex = buf.readableBytes() ;
 		byte[] bytes = new byte[readerIndex] ;
 		buf.readBytes(bytes) ;
-		return bytes ;
 	}
 
 	@Override
