@@ -11,6 +11,9 @@ public class HessianSerializable implements Serializable {
 
 	private final static int INIT_SIZE = 1024 ;
 	
+	private final static int INIT_SIZE2 = 1024 ;
+	
+	
 	@Override
 	public byte[] object2Bytes(Object object) throws IOException {
 		ByteArrayOutputStream baos = null ;
