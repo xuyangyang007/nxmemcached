@@ -34,6 +34,21 @@
 				<artifactId>hessian</artifactId>
 				<version>3.1.5</version>
 		</dependency>
+		<dependency>
+	 	 	<groupId>org.apache.thrift</groupId>
+		  <artifactId>libthrift</artifactId>
+		  <version>0.9.3</version>
+		</dependency>
+		<dependency>
+	 	 	<groupId>io.protostuff</groupId>
+		  <artifactId>protostuff-core</artifactId>
+		  <version>1.4.4</version>
+		</dependency>
+		<dependency>
+	 	 	<groupId>io.protostuff</groupId>
+		  <artifactId>protostuff-runtime</artifactId>
+		  <version>1.4.4</version>
+		</dependency>
   	</dependencies>
   
 	<build>
