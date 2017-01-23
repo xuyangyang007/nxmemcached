@@ -32,7 +32,7 @@ public class SendCommandManager {
 //        Thread.sleep(30000000);
 //    }
 
-    public void sendCommand(Command command, long optTimeOut) throws InterruptedException, CacheException, TimeoutException {
+    public CommandResponse sendCommand(Command command, long optTimeOut) throws InterruptedException, CacheException, TimeoutException {
 //        TextGetOneCommand command = new TextGetOneCommand();
 //        command.setKey("m_1");
 //        command.setKeyBytes("m_1".getBytes());
@@ -44,8 +44,8 @@ public class SendCommandManager {
         CommandResponseFuture responseFuture = new CommandResponseFuture();
         channel.attr(Constants.DEFAULT_ATTRIBUTE).set(responseFuture);
         channel.writeAndFlush(command.getBuf());
-        CommandResponse response1 = responseFuture.get(optTimeOut, TimeUnit.MILLISECONDS);
-        System.out.println(response1.getContent().toString(CharsetUtil.UTF_8));
+        CommandResponse response = responseFuture.get(optTimeOut, TimeUnit.MILLISECONDS);
+        return response;
     }
 
 }

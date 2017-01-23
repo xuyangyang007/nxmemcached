@@ -5,7 +5,6 @@ import java.nio.charset.Charset;
 import java.util.concurrent.CountDownLatch;
 
 import com.xyy.nxmemcached.common.Constants;
-import com.xyy.nxmemcached.seriable.Transcoder;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -53,9 +52,11 @@ public class TextStoreCommand extends Command {
 	public void encode() {
 		byte[] store = this.store.getStore() ;
 		byte[] keyb = key.getBytes( Charset.defaultCharset() ) ;
-		Transcoder transcoder = Transcoder.transcoder( value ) ; // 此步骤抽象出来
-		byte[] data = transcoder.object2Bytes( value ) ; 
-		byte[] fBytes = String.valueOf( transcoder.getFlag() ).getBytes() ; //TODO  
+		byte[] data = null;
+		if (value != null) {
+			data = new byte[value.readableBytes()]; 
+		}
+		byte[] fBytes = String.valueOf("1").getBytes(); 
 		byte[] expectBytes = String.valueOf(expTime).getBytes() ;
 		byte[] length = String.valueOf( data.length ).getBytes() ;
 		ByteBuf buf = null ;
@@ -72,8 +73,8 @@ public class TextStoreCommand extends Command {
 
 	@Override
 	public boolean decode(ByteBuf buf) {
-		String result = buf.toString(Charset.defaultCharset());
-		if(result.equals(STORED)) {
+		String r = buf.toString( Charset.defaultCharset() );
+		if (r.equals(STORED)) {
 			return true;
 		} else {
 			return false;

@@ -19,9 +19,9 @@ public class NxmemcachedClient {
 	
 	private static final int MAX_CONNECTIONS = 2;
 	
-	private SendCommandManager sendCommandManager = null;
+	private volatile static SendCommandManager sendCommandManager = null;
 	
-	public NxmemcachedClient(String servers,  int threadPoolSize, int connectTimeOut, int idleTime) throws CacheException {
+	private static void init(String servers,  int threadPoolSize, int connectTimeOut, int idleTime) throws CacheException {
 		if (servers == null) {
 			throw new CacheException("servers cannot be null!");
 		}
@@ -38,6 +38,17 @@ public class NxmemcachedClient {
 		}
 		MemcachedSessionLocator locator = new MemcachedSessionLocator(sessionList, HashAlgorithm.KETAMA_HASH);
 		sendCommandManager = new SendCommandManager(locator);
+	}
+	
+	public static SendCommandManager getSendCommandManager(String servers,  int threadPoolSize, int connectTimeOut, int idleTime) throws CacheException {
+		if (sendCommandManager == null) {
+			synchronized (sendCommandManager) {
+				if (sendCommandManager == null) {
+					init(servers,  threadPoolSize, connectTimeOut, idleTime);
+				}
+			}
+		}
+		return sendCommandManager;
 	}
 
 }
