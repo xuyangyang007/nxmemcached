@@ -9,19 +9,17 @@ public abstract class Command {
     protected String key;
     protected byte[] keyBytes;
     protected volatile Object result;
-    protected CountDownLatch latch;
     protected CommandType commandType;
     protected volatile ByteBuf buf;
     protected boolean noreply;
     public Command() {}
     
     
-    public Command(String key, byte[] keyBytes, Object result, CountDownLatch latch, CommandType commandType, boolean noreply) {
+    public Command(String key, byte[] keyBytes, Object result,  CommandType commandType, boolean noreply) {
 		super();
 		this.key = key;
 		this.keyBytes = keyBytes;
 		this.result = result;
-		this.latch = latch;
 		this.commandType = commandType;
 		this.noreply = noreply;
 	}
@@ -47,12 +45,6 @@ public abstract class Command {
     }
     public void setResult(Object result) {
         this.result = result;
-    }
-    public CountDownLatch getLatch() {
-        return latch;
-    }
-    public void setLatch(CountDownLatch latch) {
-        this.latch = latch;
     }
     public CommandType getCommandType() {
         return commandType;

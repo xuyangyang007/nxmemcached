@@ -18,7 +18,7 @@ public class TextStoreCommand extends Command {
 	
 	protected int expTime;
 	protected long cas;
-	protected ByteBuf value;
+	protected byte[] value;
 	private Store store ;
 	
 	public static enum Store {
@@ -40,34 +40,25 @@ public class TextStoreCommand extends Command {
 		}
 	}
 	
-	public TextStoreCommand(String key, byte[] keyBytes, CommandType cmdType,
-			CountDownLatch latch, int expTime, long cas, ByteBuf value, boolean noreply) {
-		super(key, keyBytes, value, latch, cmdType, noreply);
-		this.expTime = expTime;
-		this.cas = cas;
-		this.value = value;
+	public TextStoreCommand() {
 	}
 
 	@Override
 	public void encode() {
-		byte[] store = this.store.getStore() ;
-		byte[] keyb = key.getBytes( Charset.defaultCharset() ) ;
-		byte[] data = null;
-		if (value != null) {
-			data = new byte[value.readableBytes()]; 
-		}
-		byte[] fBytes = String.valueOf("1").getBytes(); 
-		byte[] expectBytes = String.valueOf(expTime).getBytes() ;
-		byte[] length = String.valueOf( data.length ).getBytes() ;
-		ByteBuf buf = null ;
-		if( this.store == Store.CAS ) {
-			buf = Unpooled.copiedBuffer( store , Constants.SPACE , keyb , Constants.SPACE ,
-					fBytes , Constants.SPACE , expectBytes , Constants.SPACE , length , Constants.SPACE , String.valueOf( cas ).getBytes() , Constants.CRLF , data ,   Constants.CRLF) ;
+		byte[] store = this.store.getStore();
+		byte[] keyb = key.getBytes(Charset.defaultCharset());
+		byte[] fBytes = String.valueOf("1").getBytes();
+		byte[] expectBytes = String.valueOf(expTime).getBytes();
+		byte[] length = String.valueOf(value.length).getBytes();
+		ByteBuf buf = null;
+		if (this.store == Store.CAS) {
+			buf = Unpooled.copiedBuffer(store, Constants.SPACE, keyb, Constants.SPACE, fBytes, Constants.SPACE, expectBytes, Constants.SPACE, length, Constants.SPACE, String.valueOf(cas).getBytes(), Constants.CRLF,
+					value, Constants.CRLF);
 		} else {
-			buf = Unpooled.copiedBuffer(store, Constants.SPACE, keyb, Constants.SPACE, fBytes, Constants.SPACE, expectBytes, Constants.SPACE, length, Constants.SPACE, data, Constants.SPACE);
+			buf = Unpooled.copiedBuffer(store, Constants.SPACE, keyb, Constants.SPACE, fBytes, Constants.SPACE, expectBytes, Constants.SPACE, length, Constants.SPACE, value, Constants.SPACE);
 		}
-		int readerIndex = buf.readableBytes() ;
-		byte[] bytes = new byte[readerIndex] ;
+		int readerIndex = buf.readableBytes();
+		byte[] bytes = new byte[readerIndex];
 		buf.readBytes(bytes) ;
 	}
 
@@ -79,6 +70,14 @@ public class TextStoreCommand extends Command {
 		} else {
 			return false;
 		}
+	}
+
+	public Store getStore() {
+		return store;
+	}
+
+	public void setStore(Store store) {
+		this.store = store;
 	}
 
 	public int getExpTime() {
@@ -97,11 +96,11 @@ public class TextStoreCommand extends Command {
 		this.cas = cas;
 	}
 
-	public ByteBuf getValue() {
+	public byte[] getValue() {
 		return value;
 	}
 
-	public void setValue(ByteBuf value) {
+	public void setValue(byte[] value) {
 		this.value = value;
 	}
 

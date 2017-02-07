@@ -65,11 +65,6 @@ public class NxmemcachedClient {
 	}
 	
 	public CommandResponse sendCommand(Command command, long optTimeOut) throws InterruptedException, CacheException, TimeoutException {
-		// TextGetOneCommand command = new TextGetOneCommand();
-		// command.setKey("m_1");
-		// command.setKeyBytes("m_1".getBytes());
-		// command.setCommandType(CommandType.GET_ONE);
-		// command.encode();
 		String key = command.getKey();
 		ConnectionPool session = locator.getSessionByKey(key);
 		Channel channel = session.getChannel();
