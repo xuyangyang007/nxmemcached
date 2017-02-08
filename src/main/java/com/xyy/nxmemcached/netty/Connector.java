@@ -18,11 +18,14 @@ import java.util.concurrent.TimeUnit;
 
 import com.xyy.nxmemcached.exception.CacheException;
 import com.xyy.nxmemcached.netty.handler.ClientConnectionHandler;
+import com.xyy.nxmemcached.netty.handler.MemcachedProtocolDecoder;
 
 
 public class Connector {
 
     private Bootstrap bootstrap = new Bootstrap();
+    
+    private MemcachedProtocolDecoder decoder = new MemcachedProtocolDecoder();
 
     public Connector(int threadPoolSize, int connectTimeOut, int idleTime) {
         init(threadPoolSize, connectTimeOut, idleTime);
@@ -41,6 +44,7 @@ public class Connector {
                     public void initChannel(SocketChannel ch) throws Exception {
                         ChannelPipeline pipeline = ch.pipeline();
                         pipeline.addLast(new IdleStateHandler(idleTime, 0, 0, TimeUnit.MILLISECONDS));
+                        pipeline.addLast(decoder);
                         pipeline.addLast(handler);
                     }
                 });

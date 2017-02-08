@@ -28,7 +28,12 @@ public class ThriftMcClient {
 		command.encode();
 		CommandResponse response = client.sendCommand(command, timeout);
 		ByteBuf byteBuf = response.getContent();
-		byte[] byteList = byteBuf.array();
+		if (byteBuf == null || byteBuf.readableBytes() <= 5) {
+			return null;
+		}
+		byte[] byteList = new byte[byteBuf.readableBytes() - 5];
+		byteBuf.readBytes(byteList, 0 , byteBuf.readableBytes() - 5);
+		String x = new String(byteList);
 		return ThriftSerializeUtil.deSerialize(byteList, clasz);
 	}
 	

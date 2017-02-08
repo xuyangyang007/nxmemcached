@@ -55,11 +55,10 @@ public class TextStoreCommand extends Command {
 			buf = Unpooled.copiedBuffer(store, Constants.SPACE, keyb, Constants.SPACE, fBytes, Constants.SPACE, expectBytes, Constants.SPACE, length, Constants.SPACE, String.valueOf(cas).getBytes(), Constants.CRLF,
 					value, Constants.CRLF);
 		} else {
-			buf = Unpooled.copiedBuffer(store, Constants.SPACE, keyb, Constants.SPACE, fBytes, Constants.SPACE, expectBytes, Constants.SPACE, length, Constants.SPACE, value, Constants.SPACE);
+			this.buf = Unpooled.directBuffer(store.length + Constants.SPACE.length * 4 + fBytes.length + expectBytes.length + length.length + Constants.CRLF.length * 2 + value.length);
+			buf = Unpooled.copiedBuffer(store, Constants.SPACE, keyb, Constants.SPACE, fBytes, Constants.SPACE, expectBytes, Constants.SPACE, length, Constants.CRLF, value, Constants.CRLF);
+			this.buf.writeBytes(buf);
 		}
-		int readerIndex = buf.readableBytes();
-		byte[] bytes = new byte[readerIndex];
-		buf.readBytes(bytes) ;
 	}
 
 	@Override

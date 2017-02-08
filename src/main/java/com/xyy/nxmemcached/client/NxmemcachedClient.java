@@ -55,7 +55,7 @@ public class NxmemcachedClient {
 	
 	public static NxmemcachedClient initSendCommandManager(String servers,  int threadPoolSize, int connectTimeOut, int idleTime) throws CacheException {
 		if (client == null) {
-			synchronized (client) {
+			synchronized (NxmemcachedClient.class) {
 				if (client == null) {
 					client = new NxmemcachedClient(servers,  threadPoolSize, connectTimeOut, idleTime);
 				}
