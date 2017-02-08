@@ -32,8 +32,8 @@ public class ClientConnectionHandler extends ChannelDuplexHandler {
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         Channel channel = ctx.channel();
         CommandResponseFuture future = (CommandResponseFuture)channel.attr(Constants.DEFAULT_ATTRIBUTE).get();
-        ByteBuf msgBuf = (ByteBuf) msg;
-        future.setResponse(CommandResponse.newSuccess(msgBuf));
+        CommandResponse msgBuf = (CommandResponse) msg;
+        future.setResponse(msgBuf);
         future.done();
     }
 
