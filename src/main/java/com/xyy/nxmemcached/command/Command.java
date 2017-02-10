@@ -26,7 +26,7 @@ public abstract class Command {
 
 	public abstract void encode();
 
-    public abstract boolean decode(ByteBuf buf);
+    public abstract CommandResponse decode(ByteBuf buf);
     
     public String getKey() {
         return key;

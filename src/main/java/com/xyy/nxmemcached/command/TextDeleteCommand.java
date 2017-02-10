@@ -32,8 +32,8 @@ public class TextDeleteCommand extends Command {
     }
 
     @Override
-    public boolean decode(ByteBuf buf) {
-        return false;
+    public CommandResponse decode(ByteBuf buf) {
+        return CommandResponse.newSuccess(buf);
     }
 
 }

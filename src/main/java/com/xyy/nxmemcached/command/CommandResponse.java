@@ -41,4 +41,11 @@ public class CommandResponse {
         return response;
     }
     
+    public static CommandResponse newError(ByteBuf buf) {
+        CommandResponse response = new CommandResponse();
+        response.setSuccess(false);
+        response.setContent(buf);
+        return response;
+    }
+    
 }

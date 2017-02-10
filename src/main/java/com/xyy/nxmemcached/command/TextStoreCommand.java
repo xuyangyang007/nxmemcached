@@ -2,7 +2,6 @@
 package com.xyy.nxmemcached.command;
 
 import java.nio.charset.Charset;
-import java.util.concurrent.CountDownLatch;
 
 import com.xyy.nxmemcached.common.Constants;
 
@@ -62,12 +61,12 @@ public class TextStoreCommand extends Command {
 	}
 
 	@Override
-	public boolean decode(ByteBuf buf) {
+	public CommandResponse decode(ByteBuf buf) {
 		String r = buf.toString( Charset.defaultCharset() );
 		if (r.equals(STORED)) {
-			return true;
+			return CommandResponse.newSuccess(buf);
 		} else {
-			return false;
+			return CommandResponse.newError(buf);
 		}
 	}
 
