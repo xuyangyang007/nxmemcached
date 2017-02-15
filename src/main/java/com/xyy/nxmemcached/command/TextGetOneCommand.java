@@ -2,6 +2,7 @@ package com.xyy.nxmemcached.command;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import net.rubyeye.xmemcached.command.text.TextGetCommand.ParseStatus;
 
 import com.xyy.nxmemcached.common.Constants;
 
@@ -32,6 +33,7 @@ public class TextGetOneCommand  extends Command {
 
     @Override
     public CommandResponse decode(ByteBuf buf) {
+    	CommandResponse response = CommandResponse.newSuccess(null);
     	while (true) {
     		if (buf == null || buf.readableBytes() < MIN_LENGTH) {
     			return CommandResponse.newError(buf);
@@ -39,10 +41,23 @@ public class TextGetOneCommand  extends Command {
     		switch (this.parseStatus) {
     		case NULL:
     			if (buf.getByte(0) == 'E' && buf.getByte(1) == 'N') {
-    				
+    				this.parseStatus = ParseStatus.END;
+    			} else if (buf.getByte(0) == 'V') {
+    				this.parseStatus = ParseStatus.VALUE;
     			}
     		case END:
+    			if (buf.readableBytes() < 5) {
+    				return CommandResponse.newSuccess(null);
+    			}
+    			buf.skipBytes(5);
+    			return response;
     		case VALUE:
+    			if (buf.readableBytes() < 6) {
+    				return CommandResponse.newSuccess(null);
+    			}
+    			buf.skipBytes(6);
+    			this.parseStatus = ParseStatus.KEY;
+    			continue;
     		case KEY:
     		case FLAG:
     		case DATA_LEN:
