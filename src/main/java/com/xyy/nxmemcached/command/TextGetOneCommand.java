@@ -59,12 +59,35 @@ public class TextGetOneCommand  extends Command {
     			this.parseStatus = ParseStatus.KEY;
     			continue;
     		case KEY:
+    			if (buf.readableBytes() < this.keyBytes.length + 1) {
+    				return CommandResponse.newSuccess(null);
+    			}
+    			buf.skipBytes(this.keyBytes.length + 1);
+    			this.parseStatus = ParseStatus.FLAG;
+    			continue;
     		case FLAG:
+    			int index = buf.indexOf(0, buf.readableBytes(), (byte)' ');
+    			buf.skipBytes(index);
     		case DATA_LEN:
+    			index = buf.indexOf(0, buf.readableBytes(), (byte)'\r');
+    			buf.skipBytes(index);
     		case DATA_LEN_DONE:
+    			if (buf.readableBytes() < 1) {
+    				return CommandResponse.newSuccess(null);
+    			} else if (buf.getByte(0) == '\n'){
+    				buf.skipBytes(1);
+    				this.parseStatus = ParseStatus.DATA;
+    				continue;
+    			} else {
+    				this.parseStatus = ParseStatus.CAS;
+    				continue;
+    			}
     		case CAS:
+    			// TODO
     		case CAS_DONE:
+    			// TODO
     		case DATA:
+    			
 			default:
 				return CommandResponse.newError(buf);
     		}
