@@ -2,8 +2,6 @@ package com.xyy.nxmemcached.command;
 
 import io.netty.buffer.ByteBuf;
 
-import java.util.concurrent.CountDownLatch;
-
 public abstract class Command {
     
     protected String key;

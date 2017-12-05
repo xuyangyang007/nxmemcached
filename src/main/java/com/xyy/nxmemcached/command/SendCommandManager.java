@@ -1,10 +1,5 @@
 package com.xyy.nxmemcached.command;
 
-import io.netty.channel.Channel;
-import io.netty.util.CharsetUtil;
-
-import java.net.InetSocketAddress;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -12,10 +7,10 @@ import com.xyy.nxmemcached.algorithm.MemcachedSessionLocator;
 import com.xyy.nxmemcached.common.Constants;
 import com.xyy.nxmemcached.exception.CacheException;
 import com.xyy.nxmemcached.netty.ConnectionPool;
-import com.xyy.nxmemcached.netty.Connector;
+
+import io.netty.channel.Channel;
 
 public class SendCommandManager {
-	
 	
 	MemcachedSessionLocator locator = null;
 	
@@ -23,14 +18,6 @@ public class SendCommandManager {
 		super();
 		this.locator = locator;
 	}
-
-//	public static void main(String[] args) throws CacheException, InterruptedException, ExecutionException {
-//        Connector connector = new Connector(2, 30000, 30000);
-//        InetSocketAddress address = new InetSocketAddress("ip", 11211);
-//        ConnectionPool pool = new ConnectionPool(connector, address, 2);
-//        Channel channel = pool.getChannel();
-//        Thread.sleep(30000000);
-//    }
 
     public CommandResponse sendCommand(Command command, long optTimeOut) throws InterruptedException, CacheException, TimeoutException {
 //        TextGetOneCommand command = new TextGetOneCommand();
@@ -43,6 +30,7 @@ public class SendCommandManager {
     	Channel channel = session.getChannel();
         CommandResponseFuture responseFuture = new CommandResponseFuture();
         channel.attr(Constants.DEFAULT_ATTRIBUTE).set(responseFuture);
+        channel.attr(Constants.DEFAULT_COMMAND).set(command);
         channel.writeAndFlush(command.getBuf());
         CommandResponse response = responseFuture.get(optTimeOut, TimeUnit.MILLISECONDS);
         return response;

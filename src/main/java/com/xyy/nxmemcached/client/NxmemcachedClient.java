@@ -70,6 +70,7 @@ public class NxmemcachedClient {
 		Channel channel = session.getChannel();
 		CommandResponseFuture responseFuture = new CommandResponseFuture();
 		channel.attr(Constants.DEFAULT_ATTRIBUTE).set(responseFuture);
+		channel.attr(Constants.DEFAULT_COMMAND).set(command);
 		channel.writeAndFlush(command.getBuf());
 		CommandResponse response = responseFuture.get(optTimeOut, TimeUnit.MILLISECONDS);
 		return response;

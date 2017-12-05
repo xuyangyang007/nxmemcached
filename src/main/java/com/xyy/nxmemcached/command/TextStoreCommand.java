@@ -10,7 +10,7 @@ import io.netty.buffer.Unpooled;
 
 public class TextStoreCommand extends Command {
 	
-	private final static String STORED = "STORED";
+	private final static String STORED = "STORED\r\n";
 	private final static String NOT_STORED = "NOT_STORED"; 
 	private final static String EXISTS = "EXISTS";
 	private final static String NOT_FOUND = "NOT_FOUND";

@@ -28,11 +28,11 @@ public class ThriftMcClient {
 		command.encode();
 		CommandResponse response = client.sendCommand(command, timeout);
 		ByteBuf byteBuf = response.getContent();
-		if (byteBuf == null || byteBuf.readableBytes() <= 5) {
+		if (byteBuf == null) {
 			return null;
 		}
-		byte[] byteList = new byte[byteBuf.readableBytes() - 5];
-		byteBuf.readBytes(byteList, 0 , byteBuf.readableBytes() - 5);
+		byte[] byteList = new byte[byteBuf.readableBytes()];
+		byteBuf.readBytes(byteList, 0 , byteBuf.readableBytes());
 		String x = new String(byteList);
 		return ThriftSerializeUtil.deSerialize(byteList, clasz);
 	}

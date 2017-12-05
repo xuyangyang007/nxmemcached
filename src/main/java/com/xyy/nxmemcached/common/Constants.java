@@ -14,6 +14,8 @@ public class Constants {
     public static final byte[] NO_REPLY = { 'n', 'o', 'r', 'e', 'p', 'l', 'y' };
 
     public static final AttributeKey<Object> DEFAULT_ATTRIBUTE = AttributeKey.valueOf("response");
+    
+    public static final AttributeKey<Object> DEFAULT_COMMAND = AttributeKey.valueOf("command");
 
     public static ThreadLocal<String> t = new ThreadLocal<String>();
     public static final String DEFAULT_CHARSET_NAME = "utf-8";

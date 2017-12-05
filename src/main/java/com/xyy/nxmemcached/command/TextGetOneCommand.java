@@ -1,15 +1,18 @@
 package com.xyy.nxmemcached.command;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
-import net.rubyeye.xmemcached.command.text.TextGetCommand.ParseStatus;
+import java.nio.charset.Charset;
 
 import com.xyy.nxmemcached.common.Constants;
+
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 
 
 public class TextGetOneCommand  extends Command {
 	
 	private ParseStatus parseStatus = ParseStatus.NULL;
+	
+	private Integer dataLength = 0;
 
 	public static enum ParseStatus {
 		NULL, VALUE, KEY, FLAG, DATA_LEN, DATA_LEN_DONE, CAS, CAS_DONE, DATA, END
@@ -45,6 +48,7 @@ public class TextGetOneCommand  extends Command {
     			} else if (buf.getByte(0) == 'V') {
     				this.parseStatus = ParseStatus.VALUE;
     			}
+    			continue;
     		case END:
     			if (buf.readableBytes() < 5) {
     				return CommandResponse.newSuccess(null);
@@ -66,11 +70,19 @@ public class TextGetOneCommand  extends Command {
     			this.parseStatus = ParseStatus.FLAG;
     			continue;
     		case FLAG:
-    			int index = buf.indexOf(0, buf.readableBytes(), (byte)' ');
-    			buf.skipBytes(index);
+    			int index = buf.indexOf(buf.readerIndex(), buf.readableBytes(), (byte)' ');
+    			buf.skipBytes(index - buf.readerIndex() +1);
+    			this.parseStatus = ParseStatus.DATA_LEN;
+    			continue;
     		case DATA_LEN:
-    			index = buf.indexOf(0, buf.readableBytes(), (byte)'\r');
-    			buf.skipBytes(index);
+    			index = buf.indexOf(buf.readerIndex(), buf.readableBytes(), (byte)'\r');
+    			int ll = index - buf.readerIndex();
+    			ByteBuf temp = buf.slice(buf.readerIndex(), ll);
+    			String dataStr = temp.toString(Charset.defaultCharset());
+    			dataLength = Integer.parseInt(dataStr);
+    			buf.skipBytes(ll + 2);
+    			this.parseStatus = ParseStatus.DATA_LEN_DONE;
+    			continue;
     		case DATA_LEN_DONE:
     			if (buf.readableBytes() < 1) {
     				return CommandResponse.newSuccess(null);
@@ -87,7 +99,8 @@ public class TextGetOneCommand  extends Command {
     		case CAS_DONE:
     			// TODO
     		case DATA:
-    			
+    			this.parseStatus = ParseStatus.NULL;
+    			return CommandResponse.newSuccess(buf.slice(buf.readerIndex(), dataLength));
 			default:
 				return CommandResponse.newError(buf);
     		}

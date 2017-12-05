@@ -1,15 +1,14 @@
 package com.xyy.nxmemcached.netty.handler;
 
-import io.netty.buffer.ByteBuf;
+import com.xyy.nxmemcached.command.CommandResponse;
+import com.xyy.nxmemcached.command.CommandResponseFuture;
+import com.xyy.nxmemcached.common.Constants;
+
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
 import io.netty.handler.timeout.IdleStateEvent;
-
-import com.xyy.nxmemcached.command.CommandResponse;
-import com.xyy.nxmemcached.command.CommandResponseFuture;
-import com.xyy.nxmemcached.common.Constants;
 /**
  * @author yangyang.xu
  *
