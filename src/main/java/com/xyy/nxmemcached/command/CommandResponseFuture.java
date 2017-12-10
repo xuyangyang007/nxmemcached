@@ -54,6 +54,7 @@ public class CommandResponseFuture {
         if (isProcessed.getAndSet(true)) {
             return false;
         }
+        
         isDone = true;
         latch.countDown();
         return true;

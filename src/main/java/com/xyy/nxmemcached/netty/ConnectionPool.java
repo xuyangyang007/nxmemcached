@@ -40,7 +40,7 @@ public class ConnectionPool {
 
         channel = connector.connect(host, port);
 
-        channelList.offer(channel);
+       // channelList.offer(channel);
 
         return channel;
     }

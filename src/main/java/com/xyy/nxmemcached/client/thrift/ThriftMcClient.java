@@ -27,14 +27,18 @@ public class ThriftMcClient {
 		command.setCommandType(CommandType.GET_ONE);
 		command.encode();
 		CommandResponse response = client.sendCommand(command, timeout);
-		ByteBuf byteBuf = response.getContent();
-		if (byteBuf == null) {
-			return null;
+		try {
+			ByteBuf byteBuf = response.getContent();
+			if (byteBuf == null) {
+				return null;
+			}
+			byte[] byteList = new byte[byteBuf.readableBytes()];
+			byteBuf.readBytes(byteList, 0 , byteBuf.readableBytes());
+			String x = new String(byteList);
+			return ThriftSerializeUtil.deSerialize(byteList, clasz);
+		} finally {
+			response.getContent().release();
 		}
-		byte[] byteList = new byte[byteBuf.readableBytes()];
-		byteBuf.readBytes(byteList, 0 , byteBuf.readableBytes());
-		String x = new String(byteList);
-		return ThriftSerializeUtil.deSerialize(byteList, clasz);
 	}
 	
 	public final <T extends TBase> boolean set(String key, final int exp, final T value, final long timeout) throws Exception {

@@ -6,6 +6,7 @@ import com.xyy.nxmemcached.common.Constants;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelDuplexHandler;
+import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
 import io.netty.handler.timeout.IdleStateEvent;
@@ -13,6 +14,7 @@ import io.netty.handler.timeout.IdleStateEvent;
  * @author yangyang.xu
  *
  */
+@Sharable
 public class ClientConnectionHandler extends ChannelDuplexHandler {
     
     @Override

@@ -49,6 +49,18 @@
 		  <artifactId>protostuff-runtime</artifactId>
 		  <version>1.4.4</version>
 		</dependency>
+		<dependency>  
+               <groupId>junit</groupId>  
+               <artifactId>junit</artifactId>  
+               <version>4.10</version>  
+               <scope>test</scope>  
+         </dependency> 
+         <dependency>
+			<groupId>org.databene</groupId>
+			<artifactId>contiperf</artifactId>
+			<version>2.1.0</version>
+			<scope>test</scope>
+		</dependency>
   	</dependencies>
   
 	<build>
