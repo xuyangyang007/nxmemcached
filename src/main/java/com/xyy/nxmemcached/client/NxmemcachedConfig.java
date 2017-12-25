@@ -22,7 +22,7 @@ import io.netty.channel.Channel;
  * @author yangyang.xu
  *
  */
-public class NxmemcachedClient {
+public class NxmemcachedConfig {
 	
 	private static final int MAX_CONNECTIONS = 2;
 	
@@ -33,9 +33,9 @@ public class NxmemcachedClient {
 	private int connectTimeOut;
 	private int idleTime;
 	
-	private volatile static NxmemcachedClient client;
+	private volatile static NxmemcachedConfig client;
 	
-	private NxmemcachedClient(String servers,  int threadPoolSize, int connectTimeOut, int idleTime) throws CacheException {
+	private NxmemcachedConfig(String servers,  int threadPoolSize, int connectTimeOut, int idleTime) throws CacheException {
 		if (servers == null) {
 			throw new CacheException("servers cannot be null!");
 		}
@@ -53,11 +53,11 @@ public class NxmemcachedClient {
 		this.locator = new MemcachedSessionLocator(sessionList, HashAlgorithm.KETAMA_HASH);
 	}
 	
-	public static NxmemcachedClient initSendCommandManager(String servers,  int threadPoolSize, int connectTimeOut, int idleTime) throws CacheException {
+	public static NxmemcachedConfig initSendCommandManager(String servers,  int threadPoolSize, int connectTimeOut, int idleTime) throws CacheException {
 		if (client == null) {
-			synchronized (NxmemcachedClient.class) {
+			synchronized (NxmemcachedConfig.class) {
 				if (client == null) {
-					client = new NxmemcachedClient(servers,  threadPoolSize, connectTimeOut, idleTime);
+					client = new NxmemcachedConfig(servers,  threadPoolSize, connectTimeOut, idleTime);
 				}
 			}
 		}

@@ -4,7 +4,7 @@ package com.xyy.nxmemcached.client.thrift;
 
 import org.apache.thrift.TBase;
 
-import com.xyy.nxmemcached.client.NxmemcachedClient;
+import com.xyy.nxmemcached.client.NxmemcachedConfig;
 import com.xyy.nxmemcached.command.CommandResponse;
 import com.xyy.nxmemcached.command.CommandType;
 import com.xyy.nxmemcached.command.TextGetOneCommand;
@@ -15,8 +15,8 @@ import io.netty.buffer.ByteBuf;
 
 public class ThriftMcClient {
 	
-	private NxmemcachedClient client;
-	public ThriftMcClient(NxmemcachedClient client) {
+	private NxmemcachedConfig client;
+	public ThriftMcClient(NxmemcachedConfig client) {
 		this.client = client;
 	}
 	
@@ -34,7 +34,6 @@ public class ThriftMcClient {
 			}
 			byte[] byteList = new byte[byteBuf.readableBytes()];
 			byteBuf.readBytes(byteList, 0 , byteBuf.readableBytes());
-			String x = new String(byteList);
 			return ThriftSerializeUtil.deSerialize(byteList, clasz);
 		} finally {
 			response.getContent().release();
