@@ -33,7 +33,6 @@ public class SendCommandManager {
         channel.attr(Constants.DEFAULT_COMMAND).set(command);
         channel.writeAndFlush(command.getBuf());
         CommandResponse response = responseFuture.get(optTimeOut, TimeUnit.MILLISECONDS);
-        session.returnChannel(channel);
         return response;
     }
 

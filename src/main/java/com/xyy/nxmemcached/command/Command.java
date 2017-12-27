@@ -12,6 +12,8 @@ public abstract class Command {
     protected boolean noreply;
     public Command() {}
     
+    protected CommandResponseFuture future;
+    
     
     public Command(String key, byte[] keyBytes, Object result,  CommandType commandType, boolean noreply) {
 		super();
@@ -64,4 +66,12 @@ public abstract class Command {
     public void setNoreply(boolean noreply) {
         this.noreply = noreply;
     }
+
+	public CommandResponseFuture getFuture() {
+		return future;
+	}
+
+	public void setFuture(CommandResponseFuture future) {
+		this.future = future;
+	}
 }

@@ -1,12 +1,13 @@
 package com.xyy.nxmemcached.netty;
 
-import io.netty.channel.Channel;
-
 import java.net.InetSocketAddress;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.Semaphore;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 import com.xyy.nxmemcached.exception.CacheException;
+
+import io.netty.channel.Channel;
 
 /**
  * @author yangyang.xu
@@ -16,41 +17,39 @@ public class ConnectionPool {
     
     private Connector connector;
     
-    private LinkedBlockingQueue<Channel> channelList;
+    private List<Channel> channelList;
     
     InetSocketAddress mcServerAddr;
     
-    Semaphore semp = null;
-    
-    public ConnectionPool(Connector connector, InetSocketAddress mcServerAddr, Integer connections) {
-        channelList = new LinkedBlockingQueue<Channel>();
+    public ConnectionPool(Connector connector, InetSocketAddress mcServerAddr, Integer connections) throws CacheException {
+        channelList = new ArrayList<Channel>();
         this.mcServerAddr = mcServerAddr;
         this.connector = connector;
-        this.semp = new Semaphore(connections);
-    }
-    
-    public Channel getChannel() throws CacheException, InterruptedException {
-        semp.acquire();
-        Channel channel = channelList.poll();
-        if (channel != null && channel.isActive()) {
-            return channel;
-        }
         String host = mcServerAddr.getAddress().getHostAddress();
         int port = mcServerAddr.getPort();
 
-        channel = connector.connect(host, port);
-
-       // channelList.offer(channel);
-
-        return channel;
+        for (int i=1;i<=connections;i++) {
+        	Channel channel = connector.connect(host, port);
+        	channelList.add(channel);
+        }
     }
     
-    public void returnChannel(Channel channel) {
-        if (channel != null && !channel.isActive()) {
-            return ;
+    public Channel getChannel() throws CacheException, InterruptedException {
+    	Integer index = ThreadLocalRandom.current().nextInt(channelList.size());
+        Channel channel = channelList.get(index);
+        if (channel != null && channel.isActive()) {
+            return channel;
         }
-        channelList.offer(channel);
-        semp.release();
+        synchronized (this) {
+	        String host = mcServerAddr.getAddress().getHostAddress();
+	        int port = mcServerAddr.getPort();
+	
+	        channel = connector.connect(host, port);
+	
+	        channelList.set(index, channel);
+        }
+
+        return channel;
     }
 
 	public InetSocketAddress getMcServerAddr() {

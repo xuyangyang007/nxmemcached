@@ -19,7 +19,6 @@ public class Test1 {
 	@Test
 	@PerfTest(threads = 100, duration = 10000)
     public void test() throws Exception {
-		Integer threadPoll = 5;
 		NxmemcachedConfig core = NxmemcachedConfig.initSendCommandManager("ip:port",  5, 1000, 10000);
 		final ThriftMcClient client = new ThriftMcClient(core);
 		User user = new User();

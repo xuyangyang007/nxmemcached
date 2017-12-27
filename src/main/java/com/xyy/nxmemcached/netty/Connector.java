@@ -1,7 +1,13 @@
 package com.xyy.nxmemcached.netty;
 
+import java.util.concurrent.TimeUnit;
+
+import com.xyy.nxmemcached.exception.CacheException;
+import com.xyy.nxmemcached.netty.handler.ClientConnectionHandler;
+
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
+import io.netty.channel.AdaptiveRecvByteBufAllocator;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -14,12 +20,6 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.util.concurrent.DefaultThreadFactory;
 
-import java.util.concurrent.TimeUnit;
-
-import com.xyy.nxmemcached.exception.CacheException;
-import com.xyy.nxmemcached.netty.handler.ClientConnectionHandler;
-import com.xyy.nxmemcached.netty.handler.MemcachedProtocolDecoder;
-
 
 public class Connector {
 
@@ -31,20 +31,20 @@ public class Connector {
     }
 
     private void init(int threadPoolSize, int connectTimeOut, final int idleTime) {
-        final ClientConnectionHandler handler = new ClientConnectionHandler();
         EventLoopGroup workerGroup = new NioEventLoopGroup(threadPoolSize, new DefaultThreadFactory("memcached-client",
                 Boolean.TRUE));
         bootstrap.group(workerGroup).channel(NioSocketChannel.class).option(ChannelOption.SO_KEEPALIVE, Boolean.TRUE)
                 .option(ChannelOption.TCP_NODELAY, Boolean.TRUE)
                 .option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, connectTimeOut)
+                .option(ChannelOption.RCVBUF_ALLOCATOR, AdaptiveRecvByteBufAllocator.DEFAULT)
                 .handler(new ChannelInitializer<SocketChannel>() {
                     @Override
                     public void initChannel(SocketChannel ch) throws Exception {
                         ChannelPipeline pipeline = ch.pipeline();
                         pipeline.addLast(new IdleStateHandler(idleTime, 0, 0, TimeUnit.MILLISECONDS));
-                        pipeline.addLast(new MemcachedProtocolDecoder());
-                        pipeline.addLast(handler);
+                        //pipeline.addLast(new MemcachedProtocolDecoder());
+                        pipeline.addLast(new ClientConnectionHandler());
                     }
                 });
     }

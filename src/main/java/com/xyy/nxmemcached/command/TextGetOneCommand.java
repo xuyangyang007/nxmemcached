@@ -36,16 +36,18 @@ public class TextGetOneCommand  extends Command {
 
     @Override
     public CommandResponse decode(ByteBuf buf) {
+    	//System.out.println(buf.toString(Charset.forName("utf-8")) + " size:"+ buf.capacity());
     	CommandResponse response = CommandResponse.newSuccess(null);
     	while (true) {
     		if (buf == null || buf.readableBytes() < MIN_LENGTH) {
     			return CommandResponse.newError(buf);
     		}
+    		Integer readInex = buf.readerIndex();
     		switch (this.parseStatus) {
     		case NULL:
-    			if (buf.getByte(0) == 'E' && buf.getByte(1) == 'N') {
+    			if (buf.getByte(readInex) == 'E' && buf.getByte(readInex + 1) == 'N') {
     				this.parseStatus = ParseStatus.END;
-    			} else if (buf.getByte(0) == 'V') {
+    			} else if (buf.getByte(readInex) == 'V') {
     				this.parseStatus = ParseStatus.VALUE;
     			}
     			continue;

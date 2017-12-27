@@ -15,6 +15,7 @@ import com.xyy.nxmemcached.common.Constants;
 import com.xyy.nxmemcached.exception.CacheException;
 import com.xyy.nxmemcached.netty.ConnectionPool;
 import com.xyy.nxmemcached.netty.Connector;
+import com.xyy.nxmemcached.netty.handler.ClientConnectionHandler;
 
 import io.netty.channel.Channel;
 
@@ -24,7 +25,7 @@ import io.netty.channel.Channel;
  */
 public class NxmemcachedConfig {
 	
-	private static final int MAX_CONNECTIONS = 2;
+	private static final int MAX_CONNECTIONS = 1;
 	
 	MemcachedSessionLocator locator = null;
 	
@@ -68,12 +69,14 @@ public class NxmemcachedConfig {
 		String key = command.getKey();
 		ConnectionPool session = locator.getSessionByKey(key);
 		Channel channel = session.getChannel();
+		
 		CommandResponseFuture responseFuture = new CommandResponseFuture();
-		channel.attr(Constants.DEFAULT_ATTRIBUTE).set(responseFuture);
-		channel.attr(Constants.DEFAULT_COMMAND).set(command);
-		channel.writeAndFlush(command.getBuf());
+		command.setFuture(responseFuture);
+		
+		channel.writeAndFlush(command);
+		
+		
 		CommandResponse response = responseFuture.get(optTimeOut, TimeUnit.MILLISECONDS);
-		session.returnChannel(channel);
 		return response;
 	}
 
