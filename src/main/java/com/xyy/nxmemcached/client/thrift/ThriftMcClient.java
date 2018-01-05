@@ -11,8 +11,6 @@ import com.xyy.nxmemcached.command.TextGetOneCommand;
 import com.xyy.nxmemcached.command.TextStoreCommand;
 import com.xyy.nxmemcached.command.TextStoreCommand.Store;
 
-import io.netty.buffer.ByteBuf;
-
 public class ThriftMcClient {
 	
 	private NxmemcachedConfig client;
@@ -27,17 +25,10 @@ public class ThriftMcClient {
 		command.setCommandType(CommandType.GET_ONE);
 		command.encode();
 		CommandResponse response = client.sendCommand(command, timeout);
-		ByteBuf byteBuf = response.getContent();
-		if (byteBuf == null) {
+		if (response.byteList == null) {
 			return null;
 		}
-		try {
-			byte[] byteList = new byte[byteBuf.readableBytes()];
-			byteBuf.readBytes(byteList, 0 , byteBuf.readableBytes());
-			return ThriftSerializeUtil.deSerialize(byteList, clasz);
-		} finally {
-			response.getContent().release();
-		}
+		return ThriftSerializeUtil.deSerialize(response.byteList, clasz);
 	}
 	
 	public final <T extends TBase> boolean set(String key, final int exp, final T value, final long timeout) throws Exception {

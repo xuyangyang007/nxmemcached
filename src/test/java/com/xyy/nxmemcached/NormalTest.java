@@ -9,7 +9,6 @@
   
 package com.xyy.nxmemcached;
 
-import org.databene.contiperf.PerfTest;
 import org.junit.Test;
 
 import com.xyy.nxmemcached.client.NxmemcachedConfig;
@@ -36,11 +35,7 @@ public class NormalTest {
 		user.setUserId(1);
 		user.setText("test");
 		try {
-			for (int i=1;i<=10000;i++) {
-			//client.set("test1", 100000, user, 10000000L);
-				User vl = client.get("test1", 10000000L, User.class);
-				System.out.println(vl.getUserName() + " " +i);
-			}
+			client.set("test1", 100000, user, 10000000L);
 		} catch (Exception e) {
 			e.printStackTrace();  
 		}

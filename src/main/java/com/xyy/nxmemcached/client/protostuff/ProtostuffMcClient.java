@@ -34,17 +34,11 @@ public class ProtostuffMcClient {
 		command.setCommandType(CommandType.GET_ONE);
 		command.encode();
 		CommandResponse response = client.sendCommand(command, timeout);
-		try {
-			ByteBuf byteBuf = response.getContent();
-			if (byteBuf == null) {
-				return null;
-			}
-			byte[] byteList = new byte[byteBuf.readableBytes()];
-			byteBuf.readBytes(byteList, 0 , byteBuf.readableBytes());
-			return ProtostuffSerializationUtil.deserialize(byteList, clasz);
-		} finally {
-			response.getContent().release();
+		ByteBuf byteBuf = response.getContent();
+		if (byteBuf == null) {
+			return null;
 		}
+		return ProtostuffSerializationUtil.deserialize(response.byteList, clasz);
 	}
 	
 	/**  

@@ -11,11 +11,9 @@ import com.xyy.nxmemcached.algorithm.MemcachedSessionLocator;
 import com.xyy.nxmemcached.command.Command;
 import com.xyy.nxmemcached.command.CommandResponse;
 import com.xyy.nxmemcached.command.CommandResponseFuture;
-import com.xyy.nxmemcached.common.Constants;
 import com.xyy.nxmemcached.exception.CacheException;
 import com.xyy.nxmemcached.netty.ConnectionPool;
 import com.xyy.nxmemcached.netty.Connector;
-import com.xyy.nxmemcached.netty.handler.ClientConnectionHandler;
 
 import io.netty.channel.Channel;
 

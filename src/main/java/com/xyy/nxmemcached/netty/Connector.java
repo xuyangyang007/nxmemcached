@@ -4,16 +4,17 @@ import java.util.concurrent.TimeUnit;
 
 import com.xyy.nxmemcached.exception.CacheException;
 import com.xyy.nxmemcached.netty.handler.ClientConnectionHandler;
+import com.xyy.nxmemcached.netty.handler.MemcachedProtocolDecoder;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
-import io.netty.channel.AdaptiveRecvByteBufAllocator;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.EventLoopGroup;
+import io.netty.channel.FixedRecvByteBufAllocator;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
@@ -37,13 +38,13 @@ public class Connector {
                 .option(ChannelOption.TCP_NODELAY, Boolean.TRUE)
                 .option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, connectTimeOut)
-                .option(ChannelOption.RCVBUF_ALLOCATOR, AdaptiveRecvByteBufAllocator.DEFAULT)
+                .option(ChannelOption.RCVBUF_ALLOCATOR, new FixedRecvByteBufAllocator(65535))
                 .handler(new ChannelInitializer<SocketChannel>() {
                     @Override
                     public void initChannel(SocketChannel ch) throws Exception {
                         ChannelPipeline pipeline = ch.pipeline();
                         pipeline.addLast(new IdleStateHandler(idleTime, 0, 0, TimeUnit.MILLISECONDS));
-                        //pipeline.addLast(new MemcachedProtocolDecoder());
+                        pipeline.addLast(new MemcachedProtocolDecoder());
                         pipeline.addLast(new ClientConnectionHandler());
                     }
                 });

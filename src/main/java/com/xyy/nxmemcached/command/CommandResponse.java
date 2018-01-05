@@ -5,10 +5,11 @@ import io.netty.buffer.ByteBuf;
 public class CommandResponse {
     
     private volatile boolean success = false;
-    
     private volatile ByteBuf content;
     
     private volatile Throwable cause;
+    
+	public byte[] byteList = null;
 
     public boolean isSuccess() {
         return success;

@@ -21,13 +21,8 @@ public class Test1 {
     public void test() throws Exception {
 		NxmemcachedConfig core = NxmemcachedConfig.initSendCommandManager("ip:port",  5, 1000, 10000);
 		final ThriftMcClient client = new ThriftMcClient(core);
-		User user = new User();
-		user.setUserName("xx");
-		user.setUserId(1);
-		user.setText("test");
 		try {
-			//client.set("test1", 10000, user, 10000000L);
-			User vl = client.get("test1", 10000000L, User.class);
+			User vl = client.get("test1", 1000000L, User.class);
 			System.out.println(vl.getUserName());
 		} catch (Exception e) {
 			e.printStackTrace();  

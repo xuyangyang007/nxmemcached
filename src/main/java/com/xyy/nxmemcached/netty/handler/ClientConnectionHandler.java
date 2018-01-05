@@ -1,16 +1,10 @@
 package com.xyy.nxmemcached.netty.handler;
 
-import java.nio.charset.Charset;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.LinkedTransferQueue;
 
 import com.xyy.nxmemcached.command.Command;
-import com.xyy.nxmemcached.command.CommandResponse;
-import com.xyy.nxmemcached.command.CommandResponseFuture;
 
-import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelDuplexHandler;
-import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
 import io.netty.handler.timeout.IdleStateEvent;
@@ -18,10 +12,11 @@ import io.netty.handler.timeout.IdleStateEvent;
  * @author yangyang.xu
  *
  */
-@Sharable
 public class ClientConnectionHandler extends ChannelDuplexHandler {
 	
-	LinkedBlockingQueue<Command> commandQueue = new LinkedBlockingQueue<>();
+	LinkedTransferQueue<Command> commandQueue = new LinkedTransferQueue<>();
+	
+	Command currCommand = null;
     
     @Override
     public void userEventTriggered(final ChannelHandlerContext ctx, final Object evt) throws Exception {
@@ -41,16 +36,6 @@ public class ClientConnectionHandler extends ChannelDuplexHandler {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        ByteBuf buf = (ByteBuf) msg;
-        while(buf.readableBytes() > 0) {
-        	Command command = commandQueue.poll();
-        	CommandResponseFuture future = command.getFuture();
-	      //  System.out.println(buf.toString(Charset.forName("utf-8")) + " size:"+ buf.readableBytes());
-	        
-	        CommandResponse response = command.decode(buf);
-	        future.setResponse(response);
-	        future.done();
-        }
     }
 
     @Override
@@ -58,4 +43,10 @@ public class ClientConnectionHandler extends ChannelDuplexHandler {
         cause.printStackTrace();
         ctx.close();
     }
+	public LinkedTransferQueue<Command> getCommandQueue() {
+		return commandQueue;
+	}
+	public void setCommandQueue(LinkedTransferQueue<Command> commandQueue) {
+		this.commandQueue = commandQueue;
+	}
 }
