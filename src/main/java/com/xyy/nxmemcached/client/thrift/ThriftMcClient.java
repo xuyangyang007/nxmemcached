@@ -4,7 +4,7 @@ package com.xyy.nxmemcached.client.thrift;
 
 import org.apache.thrift.TBase;
 
-import com.xyy.nxmemcached.client.NxmemcachedConfig;
+import com.xyy.nxmemcached.client.NxmemcachedManager;
 import com.xyy.nxmemcached.command.CommandResponse;
 import com.xyy.nxmemcached.command.CommandType;
 import com.xyy.nxmemcached.command.TextGetOneCommand;
@@ -13,8 +13,8 @@ import com.xyy.nxmemcached.command.TextStoreCommand.Store;
 
 public class ThriftMcClient {
 	
-	private NxmemcachedConfig client;
-	public ThriftMcClient(NxmemcachedConfig client) {
+	private NxmemcachedManager client;
+	public ThriftMcClient(NxmemcachedManager client) {
 		this.client = client;
 	}
 	

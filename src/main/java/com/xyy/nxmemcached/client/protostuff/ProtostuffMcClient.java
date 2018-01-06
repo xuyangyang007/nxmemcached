@@ -1,19 +1,17 @@
 package com.xyy.nxmemcached.client.protostuff;
 
-import com.xyy.nxmemcached.client.NxmemcachedConfig;
+import com.xyy.nxmemcached.client.NxmemcachedManager;
 import com.xyy.nxmemcached.command.CommandResponse;
 import com.xyy.nxmemcached.command.CommandType;
 import com.xyy.nxmemcached.command.TextGetOneCommand;
 import com.xyy.nxmemcached.command.TextStoreCommand;
 import com.xyy.nxmemcached.command.TextStoreCommand.Store;
 
-import io.netty.buffer.ByteBuf;
-
 public class ProtostuffMcClient {
 
 	
-	private NxmemcachedConfig client;
-	public ProtostuffMcClient(NxmemcachedConfig client) {
+	private NxmemcachedManager client;
+	public ProtostuffMcClient(NxmemcachedManager client) {
 		this.client = client;
 	}
 	
@@ -34,8 +32,7 @@ public class ProtostuffMcClient {
 		command.setCommandType(CommandType.GET_ONE);
 		command.encode();
 		CommandResponse response = client.sendCommand(command, timeout);
-		ByteBuf byteBuf = response.getContent();
-		if (byteBuf == null) {
+		if (response == null || response.byteList == null) {
 			return null;
 		}
 		return ProtostuffSerializationUtil.deserialize(response.byteList, clasz);

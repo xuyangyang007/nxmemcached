@@ -35,7 +35,10 @@ public class ConnectionPool {
     }
     
     public Channel getChannel() throws CacheException, InterruptedException {
-    	Integer index = ThreadLocalRandom.current().nextInt(channelList.size());
+    	Integer index = 0;
+    	if (channelList.size() > 1) {
+    		index = ThreadLocalRandom.current().nextInt(channelList.size());
+    	}
         Channel channel = channelList.get(index);
         if (channel != null && channel.isActive()) {
             return channel;

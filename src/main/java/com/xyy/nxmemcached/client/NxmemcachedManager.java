@@ -21,42 +21,56 @@ import io.netty.channel.Channel;
  * @author yangyang.xu
  *
  */
-public class NxmemcachedConfig {
-	
-	private static final int MAX_CONNECTIONS = 1;
+public class NxmemcachedManager {
+	// 每台服务器最大连接数
+	private int maxConnection = 1;
 	
 	MemcachedSessionLocator locator = null;
-	
+	// 服务器列表格式 ip:port,ip:port
 	private String servers;
+	// 线程池大小，默认是mc服务器数量*maxConnection
 	private int threadPoolSize;
-	private int connectTimeOut;
-	private int idleTime;
+	// 连接mc超时时间
+	private int connectTimeOut = 3000;
+	// 连接空闲时，各多久发一次心跳
+	private int idleTime = 5000;
 	
-	private volatile static NxmemcachedConfig client;
+	private volatile static NxmemcachedManager client;
 	
-	private NxmemcachedConfig(String servers,  int threadPoolSize, int connectTimeOut, int idleTime) throws CacheException {
+	List<ConnectionPool> sessionList = null;
+	
+	
+	private NxmemcachedManager(String servers,  int connectTimeOut, int maxConnection) throws CacheException {
 		if (servers == null) {
 			throw new CacheException("servers cannot be null!");
 		}
-		Connector connector = new Connector(threadPoolSize, connectTimeOut, idleTime);
-		List<ConnectionPool> sessionList = new ArrayList<>();
 		String[] severList = servers.split(",");
+		if (severList == null || severList.length == 0) {
+			throw new CacheException("servers cannot be null!");
+		}
+		this.maxConnection = maxConnection;
+		this.connectTimeOut = connectTimeOut;
+		threadPoolSize = severList.length * maxConnection;
+		
+		Connector connector = new Connector(threadPoolSize, connectTimeOut, idleTime);
+		List<ConnectionPool> sessionListTemp = new ArrayList<>();
 		for (String server : severList) {
-			String []ipPort = server.split(":");
+			String[] ipPort = server.split(":");
 			String ip = ipPort[0];
 			Integer port = Integer.parseInt(ipPort[1]);
 			InetSocketAddress mcServer = new InetSocketAddress(ip, port);
-			ConnectionPool connectionPool = new ConnectionPool(connector, mcServer, MAX_CONNECTIONS);
-			sessionList.add(connectionPool);
+			ConnectionPool connectionPool = new ConnectionPool(connector, mcServer, maxConnection);
+			sessionListTemp.add(connectionPool);
 		}
-		this.locator = new MemcachedSessionLocator(sessionList, HashAlgorithm.KETAMA_HASH);
+		sessionList = sessionListTemp;
+		this.locator = new MemcachedSessionLocator(sessionListTemp, HashAlgorithm.KETAMA_HASH);
 	}
 	
-	public static NxmemcachedConfig initSendCommandManager(String servers,  int threadPoolSize, int connectTimeOut, int idleTime) throws CacheException {
+	public static NxmemcachedManager initNxmemcachedManager(String servers, int connectTimeOut, int maxConnection) throws CacheException {
 		if (client == null) {
-			synchronized (NxmemcachedConfig.class) {
+			synchronized (NxmemcachedManager.class) {
 				if (client == null) {
-					client = new NxmemcachedConfig(servers,  threadPoolSize, connectTimeOut, idleTime);
+					client = new NxmemcachedManager(servers, connectTimeOut, maxConnection);
 				}
 			}
 		}
@@ -78,37 +92,32 @@ public class NxmemcachedConfig {
 		return response;
 	}
 
-	public String getServers() {
-		return servers;
+	public int getMaxConnection() {
+		return maxConnection;
 	}
 
-	public void setServers(String servers) {
-		this.servers = servers;
+	public MemcachedSessionLocator getLocator() {
+		return locator;
+	}
+
+	public String getServers() {
+		return servers;
 	}
 
 	public int getThreadPoolSize() {
 		return threadPoolSize;
 	}
 
-	public void setThreadPoolSize(int threadPoolSize) {
-		this.threadPoolSize = threadPoolSize;
-	}
-
 	public int getConnectTimeOut() {
 		return connectTimeOut;
-	}
-
-	public void setConnectTimeOut(int connectTimeOut) {
-		this.connectTimeOut = connectTimeOut;
 	}
 
 	public int getIdleTime() {
 		return idleTime;
 	}
-
-	public void setIdleTime(int idleTime) {
-		this.idleTime = idleTime;
+	
+	public void removeFailMcServer(InetSocketAddress addr) {
+		
 	}
-
 }
   

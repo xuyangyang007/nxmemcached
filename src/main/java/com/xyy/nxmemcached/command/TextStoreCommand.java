@@ -62,6 +62,9 @@ public class TextStoreCommand extends Command {
 
 	@Override
 	public CommandResponse decode(ByteBuf buf) {
+		if (buf.readableBytes() < STORED.length()) {
+			return null;
+		}
 		String r = buf.toString( Charset.defaultCharset() );
 		buf.skipBytes(buf.readableBytes());
 		if (r.equals(STORED)) {

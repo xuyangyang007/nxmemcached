@@ -31,13 +31,18 @@ public class TextGetOneCommand  extends Command {
         buf.writeBytes(Constants.SPACE);
         buf.writeBytes(keyBytes);
         buf.writeBytes(Constants.CRLF);
-        buf.retain();
     }
 
     @Override
     public CommandResponse decode(ByteBuf buf) {
     	//System.out.println("=== " + buf.toString(Charset.forName("utf-8")) + " size:"+ buf);
-    	CommandResponse response = CommandResponse.newSuccess(null);
+    	CommandResponse response = null;
+    	if (this.getFuture() != null && this.getFuture().getResponse() != null) {
+    		response = this.getFuture().getResponse();
+    	} else {
+    		response = CommandResponse.newSuccess(null);
+    		this.getFuture().setResponse(response);
+    	}
     	while (true) {
     		if (buf == null || buf.readableBytes() < MIN_LENGTH) {
     			return null;

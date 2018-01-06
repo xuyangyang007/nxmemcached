@@ -37,8 +37,8 @@ public class MemcachedProtocolDecoder extends ByteToMessageDecoder {
         if (response == null) {
         	return;
         }
-        currCommand = null;
         future.setResponse(response);
+        currCommand = null;
         future.done();
 		out.add(in);
 	}
