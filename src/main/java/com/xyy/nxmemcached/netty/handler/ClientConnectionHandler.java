@@ -20,11 +20,11 @@ public class ClientConnectionHandler extends ChannelDuplexHandler {
     
     @Override
     public void userEventTriggered(final ChannelHandlerContext ctx, final Object evt) throws Exception {
-    	System.out.println(" idl ");
         if (!(evt instanceof IdleStateEvent)) {
             super.userEventTriggered(ctx, evt);
             return;
         }
+        System.out.println(" idl ");
     }
     @Override
     public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {

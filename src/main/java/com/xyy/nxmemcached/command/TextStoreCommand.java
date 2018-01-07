@@ -11,9 +11,6 @@ import io.netty.buffer.Unpooled;
 public class TextStoreCommand extends Command {
 	
 	private final static String STORED = "STORED\r\n";
-	private final static String NOT_STORED = "NOT_STORED"; 
-	private final static String EXISTS = "EXISTS";
-	private final static String NOT_FOUND = "NOT_FOUND";
 	
 	protected int expTime;
 	protected long cas;
@@ -62,7 +59,7 @@ public class TextStoreCommand extends Command {
 
 	@Override
 	public CommandResponse decode(ByteBuf buf) {
-		if (buf.readableBytes() < STORED.length()) {
+		if (buf.readableBytes() < 5) {
 			return null;
 		}
 		String r = buf.toString( Charset.defaultCharset() );

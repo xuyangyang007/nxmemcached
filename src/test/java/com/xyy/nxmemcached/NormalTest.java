@@ -11,9 +11,10 @@ package com.xyy.nxmemcached;
 
 import org.junit.Test;
 
+import com.xyy.nxmemcached.client.NxmemcachedClient;
 import com.xyy.nxmemcached.client.NxmemcachedManager;
-import com.xyy.nxmemcached.client.protostuff.ProtostuffMcClient;
-import com.xyy.nxmemcached.client.thrift.ThriftMcClient;
+import com.xyy.nxmemcached.client.protostuff.ProtostuffSerialization;
+import com.xyy.nxmemcached.client.thrift.ThriftSerialization;
 import com.xyy.nxmemcached.exception.CacheException;
 
 import vo.User;
@@ -31,10 +32,11 @@ public class NormalTest {
 	@Test
     public void test() throws Exception {
 		NxmemcachedManager core = NxmemcachedManager.initNxmemcachedManager(
-				"ip1:port,ip2:port", // mc服务器列表
+				"ip:port,ip:port", // mc服务器列表
 				1000,                // 连接超时时间
-				1);                  // 每台服务器对应的连接池
-		final ThriftMcClient client = new ThriftMcClient(core);
+				1);                  // 每台服务器对应的连接池大小
+		final NxmemcachedClient client = new NxmemcachedClient(core, 
+				ProtostuffSerialization.getInstance());// 使用portostuff作为序列化
 		User user = new User();
 		user.setUserName("xx");
 		user.setUserId(1);
@@ -51,14 +53,15 @@ public class NormalTest {
 	
 	@Test
 	public void testProto() throws CacheException {
-		NxmemcachedManager core = NxmemcachedManager.initNxmemcachedManager("ip1:port,ip2:port",  1000, 1);
-		ProtostuffMcClient client = new ProtostuffMcClient(core);
+		NxmemcachedManager core = NxmemcachedManager.initNxmemcachedManager("ip:port",  1000, 1);
+		NxmemcachedClient client = new NxmemcachedClient(core, ProtostuffSerialization.getInstance());
 		User user = new User();
 		user.setUserName("yy");
 		user.setUserId(2);
 		user.setText("test");
 		try {
-			client.set("test2", 100000, user, 10000000L);
+			boolean success = client.set("test2", 100000, user, 1000L);
+			System.out.println(success);
 		} catch (Exception e) {
 			e.printStackTrace();  
 		}

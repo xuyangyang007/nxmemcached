@@ -3,6 +3,8 @@ package com.xyy.nxmemcached.command;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
+import java.nio.charset.Charset;
+
 import com.xyy.nxmemcached.common.Constants;
 
 /**
@@ -11,29 +13,32 @@ import com.xyy.nxmemcached.common.Constants;
  *
  */
 public class TextDeleteCommand extends Command {
+	
+	private final static String DELETED = "DELETED\r\n";
 
     @Override
     public void encode() {
         int size = Constants.DELETE.length + 1 + this.keyBytes.length
                 + Constants.CRLF.length;
-        if (isNoreply()) {
-            size += 8;
-        }
         this.buf = Unpooled.directBuffer(size);
-        byte[] cmdBytes = Constants.DELETE;
-        buf.writeBytes(cmdBytes);
+        buf.writeBytes(Constants.DELETE);
         buf.writeBytes(Constants.SPACE);
         buf.writeBytes(keyBytes);
         buf.writeBytes(Constants.CRLF);
-        if (isNoreply()) {
-            buf.writeBytes(Constants.NO_REPLY);
-        }
-        buf.retain();
     }
 
     @Override
     public CommandResponse decode(ByteBuf buf) {
-        return CommandResponse.newSuccess(buf);
+    	if (buf.readableBytes() < 7) {
+    		return null;
+    	}
+		String r = buf.toString( Charset.defaultCharset() );
+		buf.skipBytes(buf.readableBytes());
+		if (r.equals(DELETED)) {
+			return CommandResponse.newSuccess(buf);
+		} else {
+			return CommandResponse.newError(buf);
+		}
     }
 
 }

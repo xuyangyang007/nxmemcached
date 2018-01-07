@@ -8,10 +8,19 @@ import io.protostuff.runtime.RuntimeSchema;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class ProtostuffSerializationUtil {
+import com.xyy.nxmemcached.client.ISerialization;
+
+public class ProtostuffSerialization implements ISerialization  {
+	
+	
     private static Map<Class<?>, Schema<?>> cachedSchema = new ConcurrentHashMap<>();
 
-    private ProtostuffSerializationUtil() {
+    private ProtostuffSerialization() {
+    }
+    
+    private static ProtostuffSerialization serialization = new ProtostuffSerialization();
+    public static ProtostuffSerialization getInstance() {
+    	return serialization;
     }
 
     @SuppressWarnings("unchecked")
@@ -27,7 +36,7 @@ public class ProtostuffSerializationUtil {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> byte[] serialize(T obj) {
+    public <T> byte[] serialize(T obj) {
         Class<T> cls = (Class<T>) obj.getClass();
         LinkedBuffer buffer = LinkedBuffer.allocate(LinkedBuffer.DEFAULT_BUFFER_SIZE);
         try {
@@ -40,7 +49,7 @@ public class ProtostuffSerializationUtil {
         }
     }
 
-    public static <T> T deserialize(byte[] data, Class<T> cls) {
+    public <T> T deserialize(byte[] data, Class<T> cls) {
         try {
             T message = (T) cls.newInstance();
             Schema<T> schema = getSchema(cls);
