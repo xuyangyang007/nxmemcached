@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import com.xyy.nxmemcached.algorithm.HashAlgorithm;
 import com.xyy.nxmemcached.algorithm.MemcachedSessionLocator;
@@ -37,8 +36,6 @@ public class NxmemcachedManager {
 	private int idleTime = 5000;
 	
 	private int maxFailCount = 50; 
-	
-	private AtomicInteger atomInteger = new AtomicInteger(0);
 	
 	private volatile static NxmemcachedManager client;
 	
@@ -92,9 +89,9 @@ public class NxmemcachedManager {
 		
 		try {
 			channel.writeAndFlush(command);
-			atomInteger.set(0);
+			session.failCount.set(0);
 		} catch (Exception e) {
-			if (atomInteger.incrementAndGet() > maxFailCount) {
+			if (session.failCount.incrementAndGet() > maxFailCount) {
 				List<ConnectionPool> sessionListTemp = new ArrayList<>();
 				for (ConnectionPool pool : sessionList) {
 					if (pool == session) {

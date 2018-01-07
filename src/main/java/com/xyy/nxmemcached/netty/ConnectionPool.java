@@ -4,6 +4,7 @@ import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import com.xyy.nxmemcached.exception.CacheException;
 
@@ -20,6 +21,8 @@ public class ConnectionPool {
     private List<Channel> channelList;
     
     InetSocketAddress mcServerAddr;
+    
+    public AtomicInteger failCount = new AtomicInteger(0);
     
     public ConnectionPool(Connector connector, InetSocketAddress mcServerAddr, Integer connections) throws CacheException {
         channelList = new ArrayList<Channel>();
