@@ -22,4 +22,13 @@
 		} catch (Exception e) {
 			e.printStackTrace();  
 		}
+		
+		try {
+			User user = client.get("test2", // 获取缓存
+			 1000L,                         // 操作缓存超时时间
+			 User.class);                   // 缓存实体class
+			System.out.println(user.getUserName());
+		} catch (Exception e) {
+			e.printStackTrace();  
+		}
 
